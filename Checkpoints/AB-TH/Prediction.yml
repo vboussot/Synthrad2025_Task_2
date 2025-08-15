@@ -50,7 +50,6 @@ Predictor:
     filter: None
     dataset_filenames:
     - ./Dataset/AB:a:mha
-    - ./Dataset/TH:a:mha
     use_cache: false
     batch_size: 16
   outputs_dataset:
