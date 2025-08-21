@@ -6,3 +6,4 @@ scipy
 python-dotenv
 konfai==1.2.4
 segmentation_models_pytorch
+huggingface_hub

@@ -22,22 +22,6 @@ DEFAULT_REGION_PATH = Path("{}/region.json".format(INPUT_FOLDER))
 DEFAULT_MASK_PATH = Path("{}/images/body".format(INPUT_FOLDER))
 DEFAULT_OUTPUT_PATH = Path("{}/images/synthetic-ct".format(OUTPUT_FOLDER))
 DEFAULT_OUTPUT_FILE = Path("{}/results.json".format(OUTPUT_FOLDER))
-    
-def clipAndNormalizeAndMask(image: sitk.Image, mask: sitk.Image, v_min: float, v_max: float) -> sitk.Image:
-    data = sitk.GetArrayFromImage(image).astype(np.float32)
-    data = np.clip(data, v_min, v_max)
-
-    data = 2.0 * (data - v_min) / (v_max - v_min) - 1.0
-
-    normalized_image = sitk.GetImageFromArray(data)
-    normalized_image.CopyInformation(image)
-    normalized_image_masked = sitk.Mask(normalized_image, mask, -1)
-    return sitk.Cast(normalized_image_masked, sitk.sitkFloat32)
-    
-def _preprocess(image: sitk.Image, mask: sitk.Image) -> sitk.Image:
-    data = sitk.GetArrayFromImage(image)
-    data_mask = sitk.GetArrayFromImage(mask)
-    return clipAndNormalizeAndMask(image, mask, np.min(data[data_mask == 1]), np.percentile(data[data_mask == 1], 99.5))
 
 def _load_cases(folder: Path, file_loader: ImageLoader) -> DataFrame:
     cases = []
@@ -105,15 +89,14 @@ class SynthradAlgorithm():
 
         dataset = Dataset("./Dataset/", "mha")
         for image_path, mask_pah in zip(images, masks):
+            self.images_file_paths[image_name.name] = {}
             image, image_name = _load_input_image(image_path, file_loader=self.file_loader)
                 
-            self.images_file_paths[image_name.name] = {}
             self.images_file_paths[image_name.name]["image"] = image_name
             mask, self.images_file_paths[image_name.name]["mask"] = _load_input_image(mask_pah, file_loader=self.file_loader)
-            mask = sitk.Cast(mask, sitk.sitkUInt8)
 
-            dataset.write(f"{region}/CBCT", image_name.name.split(".")[0], _preprocess(image, mask))
-            dataset.write(f"{region}/MASK", image_name.name.split(".")[0], mask)
+            dataset.write(f"{region}/CBCT", image_name.name.split(".")[0], image)
+            dataset.write(f"{region}/MASK", image_name.name.split(".")[0], sitk.Cast(mask, sitk.sitkUInt8))
 
     def save(self):
         _case_results = []
@@ -139,8 +122,8 @@ if __name__ == "__main__":
     algorithm = SynthradAlgorithm()
     algorithm.prepareData()
     if os.path.exists("./Dataset/AB/") or os.path.exists("./Dataset/TH/"):
-        os.system("konfai PREDICTION -y --gpu 0 --config Checkpoints/AB-TH/Prediction.yml --MODEL Checkpoints/AB-TH/CV_0.pt:Checkpoints/AB-TH/CV_1.pt:Checkpoints/AB-TH/CV_2.pt:Checkpoints/AB-TH/CV_3.pt:Checkpoints/AB-TH/CV_4.pt")
+        os.system("konfai PREDICTION -y --gpu 0 --config Task_2/AB-TH/Prediction.yml --MODEL Task_2/AB-TH/CV_0.pt:Task_2/AB-TH/CV_1.pt:Task_2/AB-TH/CV_2.pt:Task_2/AB-TH/CV_3.pt:Task_2/AB-TH/CV_4.pt")
     if os.path.exists("./Dataset/HN/"):
-        os.system("konfai PREDICTION -y --gpu 0 --config Checkpoints/HN/Prediction.yml --MODEL Checkpoints/HN/CV_0.pt:Checkpoints/HN/CV_1.pt:Checkpoints/HN/CV_2.pt:Checkpoints/HN/CV_3.pt:Checkpoints/HN/CV_4.pt")
+        os.system("konfai PREDICTION -y --gpu 0 --config Task_2/HN/Prediction.yml --MODEL Task_2/HN/CV_0.pt:Task_2/HN/CV_1.pt:Task_2/HN/CV_2.pt:Task_2/HN/CV_3.pt:Task_2/HN/CV_4.pt")
     algorithm.save()
     
