@@ -137,9 +137,8 @@ konfai RESUME -y --gpu 0 \
   --MODEL Phase1.pt
 ```
 
+> Replace `Phase1.pt` with the checkpoint from Phase 1 (best model from Fold 0).
 
 ## 📌 Poster presented at MICCAI 2025, Daejeon
 
 [![Poster](./MICCAI_POSTER.png)](./MICCAI_POSTER.pdf)
-
-> Replace `Phase1.pt` with the checkpoint from Phase 1 (best model from Fold 0).
