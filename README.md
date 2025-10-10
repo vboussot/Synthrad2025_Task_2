@@ -1,5 +1,4 @@
-[![Grand Challenge](https://img.shields.io/badge/Grand%20Challenge-SynthRad_2025-blue)](https://synthrad2025.grand-challenge.org/) [![Hugging Face](https://img.shields.io/badge/🤗%20Hugging%20Face-Synthrad_2025-orange)](https://huggingface.co/VBoussot/Synthrad2025)  [![Poster](https://img.shields.io/badge/📌%20Poster-MICCAI%202025-blue)](./MICCAI_POSTER.pdf) [![Paper](https://img.shields.io/badge/📌%20Paper-BreizhCT-blue)](./BreizhCT_Paper.pdf)
-
+[![Grand Challenge](https://img.shields.io/badge/Grand%20Challenge-SynthRad_2025-blue)](https://synthrad2025.grand-challenge.org/) [![Hugging Face](https://img.shields.io/badge/🤗%20Hugging%20Face-Synthrad_2025-orange)](https://huggingface.co/VBoussot/Synthrad2025)  [![Poster](https://img.shields.io/badge/📌%20Poster-MICCAI%202025-blue)](./MICCAI_POSTER.pdf) [![Paper](https://img.shields.io/badge/📌%20Paper-BreizhCT-blue)](./BreizhCT_Paper.pdf) [![Hugging Face](https://img.shields.io/badge/🤗%20Hugging%20Face-IMPACT-orange)](https://huggingface.co/datasets/VBoussot/synthrad2025-impact-registration)
 # SynthRAD2025 – Task 2 (🥉 3rd place)
 
 This repository provides everything needed to build the Docker image and reproduce our solution ranked **3rd** in the **SynthRAD 2025 – Task 2** challenge on synthetic CT generation from CBCT.
@@ -21,6 +20,32 @@ Models were selected based on validation MAE.
 | Rank | MAE ↓             | PSNR ↑            | MS-SSIM ↑        | DICE ↑           | HD95 ↓           | Dose MAE photon ↓ | Dose MAE proton ↓ | DVH error photon ↓ | DVH error proton ↓ | GPR 2mm/2% photon ↑ | GPR 2mm/2% proton ↑ |
 |------|-------------------|-------------------|------------------|------------------|------------------|-------------------|-------------------|---------------------|---------------------|----------------------|----------------------|
 | 3    | 53.092 ± 17.347 (3)| 32.490 ± 2.292 (2)| 0.966 ± 0.025 (2)| 0.843 ± 0.079 (3)| 5.082 ± 3.359 (4)| 0.005 ± 0.004 (4) | 0.020 ± 0.014 (4) | 0.015 ± 0.019 (4)   | 0.036 ± 0.019 (2)   | 99.308 ± 1.102 (2)   | 86.407 ± 8.415 (4)   |
+
+---
+
+## 📐 Registration (IMPACT vs Baseline)
+
+Accurate sCT synthesis depends on good **inter-modal alignment**. We provide **precomputed IMPACT registrations** (MR↔CT and CBCT↔CT) to ensure consistent training/evaluation.
+
+### IMPACT setup used in this work
+The following IMPACT configuration was used for **Task 2 (CBCT→CT synthesis)**:
+- **Feature extractor:** TS/M730  
+- **Layers:** 2-Layers (**Early layer**)  
+- **Mode:** **Jacobian** 
+- **Multi-resolution:** 3-level pyramid  
+- **Final B-spline grid spacing:** **10 mm**
+
+### Why it matters
+
+- 🧭 **Alignment quality drives supervised sCT performance**
+- 🧩 **IMPACT** → better anatomical alignment than **Elastix-MI**
+  - Local set (75 pts): **MAE 56.61 → 48.57 HU**, ↑ PSNR / ↑ SSIM  
+  - Sharper, more realistic CTs
+- 📊 Public set (148 pts): **Elastix-MI lower MAE (52.87 vs 56.05 HU)**  
+  → due to **pipeline bias** (leaderboard uses Elastix registrations)
+
+### Get the registrations
+- 👉 **Hugging Face (prealigned pairs):** https://huggingface.co/datasets/VBoussot/synthrad2025-impact-registration
 
 ---
 
