@@ -122,8 +122,8 @@ if __name__ == "__main__":
     algorithm = SynthradAlgorithm()
     algorithm.prepareData()
     if os.path.exists("./Dataset/AB/") or os.path.exists("./Dataset/TH/"):
-        os.system("konfai PREDICTION -y --gpu 0 --config Task_2/AB-TH/Prediction.yml --MODEL Task_2/AB-TH/CV_0.pt:Task_2/AB-TH/CV_1.pt:Task_2/AB-TH/CV_2.pt:Task_2/AB-TH/CV_3.pt:Task_2/AB-TH/CV_4.pt")
+        os.system("konfai PREDICTION -y --gpu 0 --config Task_2/AB-TH/Prediction.yml --models Task_2/AB-TH/CV_0.pt Task_2/AB-TH/CV_1.pt Task_2/AB-TH/CV_2.pt Task_2/AB-TH/CV_3.pt Task_2/AB-TH/CV_4.pt")
     if os.path.exists("./Dataset/HN/"):
-        os.system("konfai PREDICTION -y --gpu 0 --config Task_2/HN/Prediction.yml --MODEL Task_2/HN/CV_0.pt:Task_2/HN/CV_1.pt:Task_2/HN/CV_2.pt:Task_2/HN/CV_3.pt:Task_2/HN/CV_4.pt")
+        os.system("konfai PREDICTION -y --gpu 0 --config Task_2/HN/Prediction.yml --models Task_2/HN/CV_0.pt Task_2/HN/CV_1.pt Task_2/HN/CV_2.pt Task_2/HN/CV_3.pt Task_2/HN/CV_4.pt")
     algorithm.save()
     
