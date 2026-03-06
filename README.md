@@ -51,10 +51,13 @@ The following IMPACT configuration was used for **Task 2 (CBCT→CT synthesis)**
 
 ## 🚀 Inference instructions
 
+For more implementation details and a minimal working example, see the KonfAI synthesis example:  
+https://github.com/vboussot/KonfAI/tree/main/examples/Synthesis
+
 ### 1. Install KonfAI
 
 ```bash
-pip install konfai
+pip install konfai==1.5.4
 ```
 
 ---
@@ -111,18 +114,40 @@ Your dataset should be structured as follows:
 │   └── ...
 ```
 
+## Required Folder Structure Before Inference
+
+Your directory must look like this:
+
+    .
+    ├── Dataset/
+    ├── Task_2/
+    ├── UNetpp.py
+    ├── UnNormalize.py
+    └── Prediction.yml
+
+Copy `UNetpp.py` and `UnNormalize.py` from:
+
+    KonfAI/UNetpp.py 
+    KonfAI/UnNormalize.py 
+    
+Copy `Prediction.yml` from:
+
+    Task_2/AB-TH/Prediction.yml
+
+(Use the HN version if running Head & Neck.)
+
 ### 3. Run inference (AB-TH example)
 
 ```bash
 konfai PREDICTION -y --gpu 0 \
-  --MODEL Task_2/AB-TH/CV_0.pt:Task_2/AB-TH/CV_1.pt:Task_2/AB-TH/CV_2.pt:Task_2/AB-TH/CV_3.pt:Task_2/AB-TH/CV_4.pt \
+  --models Task_2/AB-TH/CV_0.pt Task_2/AB-TH/CV_1.pt Task_2/AB-TH/CV_2.pt Task_2/AB-TH/CV_3.pt Task_2/AB-TH/CV_4.pt \
   --config Task_2/AB-TH/Prediction.yml
 ```
 
 For **HN**, replace the path accordingly:
 
 ```bash
---MODEL Task_2/HN/CV_0.pt:Task_2/HN/CV_1.pt:Task_2/HN/CV_2.pt:Task_2/HN/CV_3.pt:Task_2/HN/CV_4.pt  --config Task_2/HN/Prediction.yml
+--models Task_2/HN/CV_0.pt Task_2/HN/CV_1.pt Task_2/HN/CV_2.pt Task_2/HN/CV_3.pt Task_2/HN/CV_4.pt  --config Task_2/HN/Prediction.yml
 ```
 
 ---
@@ -151,7 +176,7 @@ Fine-tune the Phase 1 model separately for each anatomical region.
 ```bash
 konfai RESUME -y --gpu 0 \
   --config KonfAI/Plan/Phase_2/AB-TH/Config0.yml \
-  --MODEL Phase1.pt
+  --model Phase1.pt
 ```
 
 #### Head & Neck (HN) — Fold 0 example:
@@ -159,7 +184,7 @@ konfai RESUME -y --gpu 0 \
 ```bash
 konfai RESUME -y --gpu 0 \
   --config KonfAI/Plan/Phase_2/HN/Config0.yml \
-  --MODEL Phase1.pt
+  --model Phase1.pt
 ```
 
 > Replace `Phase1.pt` with the checkpoint from Phase 1 (best model from Fold 0).
