@@ -89,9 +89,8 @@ class SynthradAlgorithm():
 
         dataset = Dataset("./Dataset/", "mha")
         for image_path, mask_pah in zip(images, masks):
-            self.images_file_paths[image_name.name] = {}
             image, image_name = _load_input_image(image_path, file_loader=self.file_loader)
-                
+            self.images_file_paths[image_name.name] = {}
             self.images_file_paths[image_name.name]["image"] = image_name
             mask, self.images_file_paths[image_name.name]["mask"] = _load_input_image(mask_pah, file_loader=self.file_loader)
 
