@@ -57,7 +57,7 @@ https://github.com/vboussot/KonfAI/tree/main/examples/Synthesis
 ### 1. Install KonfAI
 
 ```bash
-pip install konfai[itk]==1.5.9
+pip install "konfai[itk,smp]==1.8.7"
 ```
 
 ---
@@ -116,11 +116,11 @@ Your dataset should be structured as follows:
 
 ### 4. Run inference
 
-Copy `UNetpp.py` and `UnNormalize.py` next to your working directory — the prediction config
-references them through the `UNetpp:` and `UnNormalize:` classpaths:
+Copy `UNetpp.py` next to your working directory — the prediction config references it through the
+`UNetpp:` classpath:
 
 ```bash
-cp KonfAI/UNetpp.py KonfAI/UnNormalize.py .
+cp KonfAI/UNetpp.py .
 ```
 
 Your directory should then look like this:
@@ -128,8 +128,7 @@ Your directory should then look like this:
     .
     ├── Dataset/
     ├── Task_2/            # weights + Prediction.yml (from Hugging Face)
-    ├── UNetpp.py
-    └── UnNormalize.py
+    └── UNetpp.py
 
 **AB-TH example:**
 
@@ -153,9 +152,35 @@ Predictions are written to `./Predictions/Out/Dataset/<case>/sCT.mha`.
 > AB-TH or HN model family based on the anatomical region.
 
 ---
+
+## 📏 Evaluation
+
+These are the models submitted to the challenge. They are trained on the pairs registered by the
+organizers (Elastix), and the leaderboard scores the sCT against the planning CT **deformably registered to
+the CBCT by the organizers**. Use that same reference on your own cases: a voxel-wise metric only means
+something when the model and the reference CT follow the same registration.
+
+Save the registered CT as `CT.mha` next to `CBCT.mha` and `MASK.mha`, then:
+
+```bash
+konfai EVALUATION -y --config KonfAI/Evaluation.yml
+```
+
+MAE, PSNR and SSIM inside the mask are written to `./Evaluations/Out/Metric_TRAIN.json`.
+
+The public archives contain the planning CT, not the organizers' deformable result.
+[RegistrationBias-sCT](https://github.com/vboussot/RegistrationBias-sCT) computes it with the organizers'
+parameter files (`scripts/preprocessing/register_elx.py`) and provides the transforms of 169 public cases.
+
+> Our models trained on IMPACT-registered pairs are a separate release,
+> [TotalSynth / ImpactSynth](https://huggingface.co/VBoussot/ImpactSynth). Their reference is the planning CT,
+> with the IMPACT-registered image as input; the two families are not evaluated the same way.
+
+---
 ## 🛠️ How to Reproduce Training
 
-> Training additionally requires TensorBoard: `pip install konfai[itk,tensorboard]==1.5.9`.
+> Training additionally requires TensorBoard: `pip install "konfai[itk,smp,tensorboard]==1.8.7"`.
+> Run the commands from the repository root, with the model file next to it: `cp KonfAI/UNetpp.py .`
 > The perceptual loss is `SAM_Perceptual` (SAM2.1 features); the `Statistics` transform on the CT
 > target group feeds it the required intensity statistics.
 

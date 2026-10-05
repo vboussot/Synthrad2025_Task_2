@@ -1,24 +1,4 @@
-from huggingface_hub import hf_hub_download
-import os
-import shutil
+from huggingface_hub import snapshot_download
 
-files = [
-    "Task_2/AB-TH/CV_0.pt",
-    "Task_2/AB-TH/CV_1.pt",
-    "Task_2/AB-TH/CV_2.pt",
-    "Task_2/AB-TH/CV_3.pt",
-    "Task_2/AB-TH/CV_4.pt",
-    "Task_2/AB-TH/Prediction.yml",
-    "Task_2/HN/CV_0.pt",
-    "Task_2/HN/CV_1.pt",
-    "Task_2/HN/CV_2.pt",
-    "Task_2/HN/CV_3.pt",
-    "Task_2/HN/CV_4.pt",
-    "Task_2/HN/Prediction.yml",
-]
-
-for file in files:
-    cached_path = hf_hub_download(repo_id="vboussot/Synthrad2025", filename=file, repo_type="model")
-    local_path = os.path.join(".", file)
-    os.makedirs(os.path.dirname(local_path), exist_ok=True)
-    shutil.copy(cached_path, local_path)
+# Weights and prediction configurations of Task 2, written to ./Task_2/ (can be run again to update them).
+snapshot_download(repo_id="VBoussot/Synthrad2025", allow_patterns="Task_2/*", local_dir=".")

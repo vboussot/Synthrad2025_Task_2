@@ -4,5 +4,5 @@ scikit-learn
 numpy
 scipy
 python-dotenv
-konfai[itk]==1.5.9
-segmentation_models_pytorch
+huggingface_hub
+konfai[itk,smp]==1.8.7
